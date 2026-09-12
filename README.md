@@ -1,177 +1,77 @@
-# 🔬 Sage Lens - Multi Agent Orchestration Deep Research Agentic AI System
+# Sage Lens
 
-> **Research anything, anywhere using orchestrated multi-agent AI intelligence**
+Sage Lens is a Streamlit research application that turns a single topic query into a sourced research document: it gathers web results (Tavily, Serper), ranks related YouTube videos by view count, and generates the write-up with commercial LLMs (GPT-4 Turbo, Claude 3.5 Sonnet, optionally DeepSeek). It is aimed at individual researchers and analysts who want a one-screen "search, synthesize, cite" loop without assembling the pipeline themselves.
 
-Sage Lens is an advanced agentic AI research platform that orchestrates multiple specialized agents to conduct comprehensive deep research across the web, synthesize information, and produce curated, publication-ready content.
+The repository contains two variants:
 
-## 🌟 Key Features
+| File | Role |
+|---|---|
+| `sage_lens_enhanced.py` | Primary app. Optional role-specialized generation chain (research, content, analysis), multi-provider fallback, tabbed UI with metrics. |
+| `sage-lens.py` | Baseline app. Two-provider generation (OpenAI + Anthropic), pick-longest selection, simpler two-column UI. Run by the devcontainer. |
 
-### 🤖 Multi-Agent Orchestration
-- **Orchestrator Agent**: Coordinates the entire research workflow
-- **Research Agent**: Conducts deep research and synthesis
-- **Content Agent**: Refines and polishes content to publication standards
-- **Analysis Agent**: Provides strategic insights and critical evaluation
-- **Web Crawler Agents**: Simultaneously search multiple sources
+## Architecture at a glance
 
-### 🔍 Multi-Source Intelligence
-- **Tavily AI Search**: Semantic web search with AI-powered ranking
-- **Serper Google Search**: Comprehensive web coverage with knowledge graph
-- **YouTube Search**: Video content discovery with popularity ranking
-- **Parallel Processing**: All sources searched simultaneously
+- **Orchestration pattern:** a **sequential pipeline** driven by a single coordinator class (`SageLensAgenticSystem`): web search, then video search, then a three-stage role-prompt chain (research, content, analysis). There is no parallelism, no inter-agent negotiation, and no autonomous tool loop. In the enhanced app the "agents" are role-instruction prompt templates: the OpenAI Agents SDK `Agent` objects are constructed if the SDK is installed, but `_generate_with_agent` deliberately bypasses the SDK `Runner` and calls the Chat Completions API directly with each agent's instructions prepended to the prompt.
+- **Fallback mode (best-of-N):** when agentic mode is off or unavailable, the same prompt is sent to OpenAI, Anthropic, and DeepSeek in sequence and the longest response is kept.
+- **Models:** `gpt-4-turbo` (OpenAI), `claude-3-5-sonnet-20241022` (Anthropic), `deepseek-chat` (DeepSeek, OpenAI-compatible endpoint, enhanced app only).
+- **Retrieval:** Tavily and Serper web search plus `youtube_search` scraping; the top web snippets are injected into the generation prompt as context. There is no vector store and no embedding-based retrieval.
+- **State:** Streamlit `st.session_state` only — per-browser-session, in-memory result history. Nothing is persisted to disk or a database.
 
-### 🧠 Multi-Provider AI
-- **OpenAI GPT-4 Turbo**: Advanced reasoning and content generation
-- **Anthropic Claude 3.5 Sonnet**: Alternative perspective and analysis
-- **DeepSeek**: Additional insights and cost-effective generation
-- **Intelligent Selection**: Automatically chooses best result
+```mermaid
+flowchart LR
+    Q[Topic query] --> WS[Web search<br/>Tavily + Serper]
+    WS --> VS[Video search<br/>YouTube]
+    VS --> R[Research stage<br/>gpt-4-turbo]
+    R --> C[Content stage<br/>gpt-4-turbo]
+    C --> A[Analysis stage<br/>gpt-4-turbo]
+    A --> UI[Streamlit tabs:<br/>content, references, videos,<br/>analysis, metrics]
+    VS -. agentic mode off .-> F[Best-of-N:<br/>OpenAI / Anthropic / DeepSeek,<br/>longest response wins]
+    F --> UI
+```
 
-### 📊 Comprehensive Output
-- **Research Documents**: Well-structured, comprehensive content
-- **Curated References**: Web resources with snippets and links
-- **Top Videos**: Ranked by popularity with view counts
-- **Deep Analysis**: Strategic insights and implications
-- **Performance Metrics**: Processing time and provider information
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full component map and data flow.
 
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.9+
-- API Keys (see Configuration)
-
-### Installation
+## Quickstart
 
 ```bash
-# Clone repository
 git clone https://github.com/git-bonda108/sage-lens.git
 cd sage-lens
-
-# Install dependencies
 pip install -r requirements.txt
 
-# Install OpenAI Agents SDK (optional but recommended)
-pip install openai-agents
-```
+# create your key file
+cp .env.example .env   # then edit .env with real keys
 
-### Configuration
+# optional: verify the environment
+python test_setup.py
+# expected: a checklist of package imports and key presence,
+# ending "✅ Setup complete - ready to run!" (or "will run in standard mode"
+# if the openai-agents package is absent)
 
-Create a `.env` file:
-
-```env
-OPENAI_API_KEY=your-openai-key
-ANTHROPIC_API_KEY=your-anthropic-key
-DEEPSEEK_API_KEY=your-deepseek-key
-TAVILY_API_KEY=your-tavily-key
-SERPER_API_KEY=your-serper-key
-```
-
-### Run
-
-```bash
 streamlit run sage_lens_enhanced.py
+# expected: "You can now view your Streamlit app in your browser."
+# then open http://localhost:8501
 ```
 
-Access at `http://localhost:8501`
+To run the baseline variant instead: `streamlit run sage-lens.py` (this one requires both `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`).
 
-## 🔄 How It Works
+## Configuration
 
-### Orchestration Workflow
+Keys are read from Streamlit secrets first (`st.secrets`, for Streamlit Cloud), then from environment variables / `.env` (`python-dotenv`).
 
-1. **Information Gathering**
-   - Orchestrator receives research query
-   - Web crawler agents search Tavily, Serper, and YouTube in parallel
-   - All information collected simultaneously
+| Variable | Required | Used for | Where to get it |
+|---|---|---|---|
+| `OPENAI_API_KEY` | Yes (both apps) | GPT-4 Turbo generation; all three role stages | https://platform.openai.com/api-keys |
+| `ANTHROPIC_API_KEY` | Baseline: yes. Enhanced: optional | Claude 3.5 Sonnet generation (fallback mode) | https://console.anthropic.com/settings/keys |
+| `DEEPSEEK_API_KEY` | Optional (enhanced only) | `deepseek-chat` generation (fallback mode) | https://platform.deepseek.com |
+| `TAVILY_API_KEY` | Optional | Semantic web search | https://tavily.com |
+| `SERPER_API_KEY` | Optional | Google search via Serper (organic + knowledge graph) | https://serper.dev |
 
-2. **Content Generation**
-   - Research Agent analyzes and synthesizes findings
-   - Content Agent refines to publication quality
-   - Multiple AI providers generate content in parallel
+With no search keys configured the app still generates content, but the References tab will be empty. YouTube search needs no key.
 
-3. **Analysis & Refinement**
-   - Analysis Agent provides deep insights
-   - Identifies patterns, trends, and implications
-   - Highlights critical considerations
+## Documentation
 
-4. **Curation & Presentation**
-   - Resources deduplicated and ranked
-   - Videos sorted by popularity
-   - Comprehensive metrics provided
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — component map, data flow, orchestration analysis, design trade-offs
+- [docs/EVALUATION.md](docs/EVALUATION.md) — what is actually tested today, edge cases handled in code, and a proposed evaluation harness
+- [docs/HARDENING.md](docs/HARDENING.md) — current security posture and a staged path to production
 
-## 🎯 Agent Specializations
-
-### Research Agent
-- Conducts comprehensive research on any topic
-- Synthesizes information from multiple sources
-- Generates well-structured documentation
-- Cites sources appropriately
-
-### Content Agent
-- Transforms research into polished content
-- Ensures clarity and readability
-- Maintains accuracy while improving presentation
-- Creates publication-ready output
-
-### Analysis Agent
-- Analyzes research for key insights
-- Identifies patterns and trends
-- Provides critical evaluation
-- Suggests implications and applications
-
-## 📚 Use Cases
-
-- **Academic Research**: Comprehensive literature reviews and analysis
-- **Market Research**: Industry trends and competitive analysis
-- **Technical Documentation**: In-depth technical guides and tutorials
-- **Content Creation**: Research-backed articles and blog posts
-- **Business Intelligence**: Strategic insights and recommendations
-
-## 🛠️ Technology Stack
-
-- **Framework**: Streamlit
-- **AI SDK**: OpenAI Agents SDK
-- **LLM Providers**: OpenAI, Anthropic, DeepSeek
-- **Search APIs**: Tavily, Serper, YouTube
-- **Language**: Python 3.9+
-
-## 📖 Documentation
-
-- **Workflow Tab**: Detailed explanation of the orchestration process
-- **API Documentation**: See individual provider documentation
-- **Deployment Guide**: See `DEPLOYMENT_INSTRUCTIONS.md`
-
-## 🔐 Security
-
-- API keys stored in environment variables
-- Never commit `.env` files
-- Secure API key handling
-- No data persistence
-
-## 🤝 Contributing
-
-Contributions welcome! Please ensure:
-- Code follows PEP 8 style guidelines
-- All API keys are kept secure
-- Tests are added for new features
-- Documentation is updated
-
-## 📝 License
-
-This project is part of the Sage Lens research platform.
-
-## 🔗 Links
-
-- **GitHub**: https://github.com/git-bonda108/sage-lens
-- **Issues**: https://github.com/git-bonda108/sage-lens/issues
-
-## 🙏 Acknowledgments
-
-Built with:
-- OpenAI Agents SDK
-- Streamlit
-- Tavily AI
-- Serper.dev
-- Anthropic Claude
-- DeepSeek
-
----
-
-**Built with ❤️ for comprehensive research and knowledge discovery**
+Historical setup and deployment notes from earlier iterations remain in the repository root (`DEPLOYMENT_INSTRUCTIONS.md`, `QUICKSTART.md`, and similar); the three documents above are the maintained reference.
