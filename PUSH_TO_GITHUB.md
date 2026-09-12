@@ -17,7 +17,7 @@ Your code is committed and ready to push! Follow these steps:
 
 3. **Push Your Code**
    ```bash
-   cd /Users/macbook/Documents/SDLC
+   cd /path/to/sage-lens
    
    # Add remote (replace YOUR_USERNAME and REPO_NAME)
    git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
@@ -32,7 +32,7 @@ Your code is committed and ready to push! Follow these steps:
 If you already have a GitHub repository:
 
 ```bash
-cd /Users/macbook/Documents/SDLC
+cd /path/to/sage-lens
 
 # Add remote (replace with your repo URL)
 git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
@@ -45,7 +45,7 @@ git push -u origin main
 ## Option 3: Using SSH (if you have SSH keys set up)
 
 ```bash
-cd /Users/macbook/Documents/SDLC
+cd /path/to/sage-lens
 
 # Add remote with SSH
 git remote add origin git@github.com:YOUR_USERNAME/REPO_NAME.git
