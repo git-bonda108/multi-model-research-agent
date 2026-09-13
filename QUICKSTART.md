@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide - Sage-Lens Enhanced
+# 🚀 Quick Start Guide - Multi-Model Research Agent
 
 ## Prerequisites Check
 

@@ -9,7 +9,7 @@ multi-model-research-agent/
 ├── research_agent_app.py      # primary app (single file)
 │   ├── WebSearchTool          # Tavily + Serper search, dedup by URL
 │   ├── VideoSearchTool        # YouTube search, view-count parse + sort
-│   ├── SageLensAgenticSystem  # coordinator: clients, keys, pipeline
+│   ├── ResearchAgenticSystem  # coordinator: clients, keys, pipeline
 │   │   ├── _initialize_agents()        # 3 role definitions (research/content/analysis)
 │   │   ├── _generate_with_agent()      # role instructions + Chat Completions
 │   │   ├── _generate_with_openai()     # gpt-4-turbo, temp 0.3, max_tokens 4000
@@ -18,7 +18,7 @@ multi-model-research-agent/
 │   │   └── process_query_agentic()     # the pipeline entry point
 │   └── main()                 # Streamlit UI: input, 6 result tabs, version history
 ├── multi-model-research-agent.py               # baseline app (single file)
-│   ├── SageLensSystem         # OpenAI + Anthropic clients, search config
+│   ├── LegacyResearchSystem         # OpenAI + Anthropic clients, search config
 │   │   ├── _search_web / _search_videos
 │   │   ├── _generate_content  # per-provider generation
 │   │   └── process_query      # generate first, then search
@@ -35,7 +35,7 @@ Both applications are self-contained single files with no shared module; the enh
 
 ## Data flow, end to end (enhanced app)
 
-1. **Input.** `main()` collects a topic string from a Streamlit text area. On Generate, it constructs a fresh `SageLensAgenticSystem` (clients are re-created per query, not cached).
+1. **Input.** `main()` collects a topic string from a Streamlit text area. On Generate, it constructs a fresh `ResearchAgenticSystem` (clients are re-created per query, not cached).
 2. **Key resolution.** `get_secret()` tries `st.secrets` (attribute access, then dict access) and falls back to `os.getenv`, stripping whitespace and quotes. Only `OPENAI_API_KEY` is mandatory; missing optional keys disable the corresponding provider or search source rather than failing.
 3. **Web search.** `WebSearchTool.search()` queries Tavily (max 5 results) then Serper (10 organic results plus the knowledge-graph entry when present), sequentially, each in its own try/except. Results are normalized to `{title, url, snippet}`, deduplicated by URL preserving order, and truncated to 10.
 4. **Video search.** `VideoSearchTool.search()` scrapes YouTube via the `youtube_search` package, parses view strings ("1.2M", "500K") into numbers, sorts descending, returns the top 5 as `{title, url, views}`.
@@ -70,4 +70,4 @@ The baseline app follows the same shape with two differences: generation runs be
 - **Prompt-role "agents" instead of SDK execution.** The code constructs OpenAI Agents SDK objects but routes execution through plain Chat Completions. This avoids the SDK's async runner inside Streamlit's synchronous script model, at the cost of losing actual SDK capabilities (tool calling, handoffs). The UI copy describes a fuller multi-agent system than the execution path implements.
 - **Longest-response selection.** The best-of-N rule (`max(versions, key=len)`) is cheap and deterministic but equates length with quality; it also multiplies token cost by the number of configured providers.
 - **Graceful degradation over hard failure.** Nearly every external call is wrapped in try/except with a Streamlit warning and an empty-result fallback; a Serper HTTP 403 is silently skipped so the app continues on Tavily alone. Only a missing `OPENAI_API_KEY` (plus `ANTHROPIC_API_KEY` in the baseline) halts the app, via `st.stop()` with remediation instructions.
-- **Per-query client construction.** `SageLensAgenticSystem()` is instantiated inside the button handler, so API clients and key resolution are redone on every query. Simple and stateless, but adds per-query overhead and makes connection reuse impossible.
+- **Per-query client construction.** `ResearchAgenticSystem()` is instantiated inside the button handler, so API clients and key resolution are redone on every query. Simple and stateless, but adds per-query overhead and makes connection reuse impossible.

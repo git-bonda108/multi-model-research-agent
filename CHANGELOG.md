@@ -1,4 +1,4 @@
-# Changelog - Sage-Lens Enhanced
+# Changelog - Multi-Model Research Agent
 
 ## Version 2.0.0 - Enhanced Agentic AI Edition
 

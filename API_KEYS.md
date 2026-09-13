@@ -2,7 +2,7 @@
 
 ## 🔑 Required API Keys
 
-Sage-Lens requires **4 API keys** to function properly. All are essential:
+Multi-Model Research Agent requires **4 API keys** to function properly. All are essential:
 
 | Key | Provider | Purpose | Get It Here |
 |-----|----------|---------|------------|

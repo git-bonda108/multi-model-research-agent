@@ -1,4 +1,4 @@
-# Streamlit Cloud Deployment Guide for Sage-Lens
+# Streamlit Cloud Deployment Guide for Multi-Model Research Agent
 
 ## 🚀 Quick Deployment Checklist
 

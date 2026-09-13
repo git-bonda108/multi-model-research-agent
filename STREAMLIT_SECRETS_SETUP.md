@@ -2,7 +2,7 @@
 
 ## Why This Matters
 
-The Sage-Lens app now supports **both** local development (using `.env` files) and Streamlit Cloud deployment (using `st.secrets`). The code automatically detects which environment it's running in and uses the appropriate method.
+The Multi-Model Research Agent app now supports **both** local development (using `.env` files) and Streamlit Cloud deployment (using `st.secrets`). The code automatically detects which environment it's running in and uses the appropriate method.
 
 ## ✅ How It Works
 

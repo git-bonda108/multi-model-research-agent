@@ -12,7 +12,7 @@ import anthropic
 load_dotenv(override=True)
 
 
-class SageLensSystem:
+class LegacyResearchSystem:
     def __init__(self):
         try:
             # Force reload environment variables (for local development)
@@ -253,7 +253,7 @@ class SageLensSystem:
 
 def main():
     st.set_page_config(
-        page_title="Sage-Lens",
+        page_title="Multi-Model Research Agent",
         layout="wide",
         page_icon="🔍",
         initial_sidebar_state="expanded"
@@ -270,7 +270,7 @@ def main():
     """, unsafe_allow_html=True)
 
     # Header section
-    st.title("🔍 Sage-Lens: Agentic AI Research Engine")
+    st.title("🔍 Multi-Model Research Agent: Agentic AI Research Engine")
     st.markdown("### Your AI-Powered Research Companion")
     st.write("---")
 
@@ -295,7 +295,7 @@ def main():
             if st.button("🚀 Generate", use_container_width=True):
                 if topic.strip():
                     with st.spinner("🔬 Agentic AI processors analyzing..."):
-                        st.session_state.current_result = SageLensSystem().process_query(topic)
+                        st.session_state.current_result = LegacyResearchSystem().process_query(topic)
                         # Only add to history if content is a dict (successful generation)
                         if isinstance(st.session_state.current_result["content"], dict):
                             st.session_state.history.append(st.session_state.current_result)
