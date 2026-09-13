@@ -13,19 +13,19 @@ python test_setup.py
 ### Option 1: Direct Streamlit Command
 
 ```bash
-python -m streamlit run sage_lens_enhanced.py
+python -m streamlit run research_agent_app.py
 ```
 
 ### Option 2: Using Streamlit CLI
 
 ```bash
-streamlit run sage_lens_enhanced.py
+streamlit run research_agent_app.py
 ```
 
 ### Option 3: With Custom Port
 
 ```bash
-streamlit run sage_lens_enhanced.py --server.port 8502
+streamlit run research_agent_app.py --server.port 8502
 ```
 
 ## First Run

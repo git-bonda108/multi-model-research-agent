@@ -5,8 +5,8 @@ This document describes the system as it exists in the code at HEAD. File and cl
 ## Component map
 
 ```
-sage-lens/
-├── sage_lens_enhanced.py      # primary app (single file)
+multi-model-research-agent/
+├── research_agent_app.py      # primary app (single file)
 │   ├── WebSearchTool          # Tavily + Serper search, dedup by URL
 │   ├── VideoSearchTool        # YouTube search, view-count parse + sort
 │   ├── SageLensAgenticSystem  # coordinator: clients, keys, pipeline
@@ -17,7 +17,7 @@ sage-lens/
 │   │   ├── _generate_with_deepseek()   # deepseek-chat via OpenAI-compatible base_url
 │   │   └── process_query_agentic()     # the pipeline entry point
 │   └── main()                 # Streamlit UI: input, 6 result tabs, version history
-├── sage-lens.py               # baseline app (single file)
+├── multi-model-research-agent.py               # baseline app (single file)
 │   ├── SageLensSystem         # OpenAI + Anthropic clients, search config
 │   │   ├── _search_web / _search_videos
 │   │   ├── _generate_content  # per-provider generation
@@ -25,10 +25,10 @@ sage-lens/
 │   └── main()                 # simpler two-column UI
 ├── test_setup.py              # environment check script (imports + env vars)
 ├── requirements.txt           # enhanced app dependencies
-├── requirements-sage-lens.txt # baseline app dependencies
+├── requirements-multi-model-research-agent.txt # baseline app dependencies
 ├── .env.example               # placeholder key template
 ├── .streamlit/config.toml     # server/theme settings (headless, port 8501, XSRF on)
-└── .devcontainer/devcontainer.json  # Codespaces: installs deps, runs sage-lens.py
+└── .devcontainer/devcontainer.json  # Codespaces: installs deps, runs multi-model-research-agent.py
 ```
 
 Both applications are self-contained single files with no shared module; the enhanced app is a superset rewrite of the baseline, not an import of it.

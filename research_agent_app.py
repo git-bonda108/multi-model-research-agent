@@ -1,5 +1,5 @@
 """
-Sage-Lens Enhanced: Agentic AI Research Engine
+Multi-Model Research Agent: multi-provider research engine
 Built with OpenAI Agents SDK for advanced AI capabilities
 """
 
@@ -173,8 +173,8 @@ class VideoSearchTool:
             return []
 
 
-class SageLensAgenticSystem:
-    """Enhanced Sage-Lens system using OpenAI Agents SDK"""
+class ResearchAgenticSystem:
+    """Enhanced Multi-Model Research Agent system using OpenAI Agents SDK"""
     
     def __init__(self):
         try:
@@ -570,14 +570,14 @@ class SageLensAgenticSystem:
 def main():
     """Main Streamlit application"""
     st.set_page_config(
-        page_title="Sage-Lens Enhanced | Agentic AI Research",
+        page_title="Multi-Model Research Agent Enhanced | Agentic AI Research",
         layout="wide",
         page_icon="🔬",
         initial_sidebar_state="expanded",
         menu_items={
-            'Get Help': 'https://github.com/git-bonda108/sage-lens',
-            'Report a bug': 'https://github.com/git-bonda108/sage-lens/issues',
-            'About': "Sage-Lens Enhanced: Advanced Agentic AI Research Engine"
+            'Get Help': 'https://github.com/git-bonda108/multi-model-research-agent',
+            'Report a bug': 'https://github.com/git-bonda108/multi-model-research-agent/issues',
+            'About': "Multi-Model Research Agent Enhanced: Advanced Agentic AI Research Engine"
         }
     )
     
@@ -632,7 +632,7 @@ def main():
     """, unsafe_allow_html=True)
     
     # Header section with enhanced design
-    st.title("🔬 Sage Lens")
+    st.title("🔬 Multi-Model Research Agent")
     st.markdown("### Multi Agent Orchestration - Deep Research Agentic AI System")
     st.markdown("Powered by OpenAI Agents SDK | Multi-Source Intelligence | Orchestrated Deep Research")
     
@@ -700,7 +700,7 @@ def main():
     # Process query
     if generate_btn and topic.strip():
         with st.spinner("🔬 Processing your research query..."):
-            system = SageLensAgenticSystem()
+            system = ResearchAgenticSystem()
             result = system.process_query_agentic(topic, use_agents=use_agents)
             
             if result.get("content"):

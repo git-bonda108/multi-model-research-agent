@@ -45,7 +45,7 @@
 - **Code Quality**: Improved documentation, type hints, and structure
 
 ### 📝 Files Added
-- `sage_lens_enhanced.py`: Main enhanced application
+- `research_agent_app.py`: Main enhanced application
 - `README_ENHANCED.md`: Comprehensive documentation
 - `QUICKSTART.md`: Quick start guide
 - `test_setup.py`: Setup validation script
@@ -61,7 +61,7 @@
 - Fixed agent initialization error handling
 
 ### ⚠️ Breaking Changes
-- None - Enhanced version is a separate file, original `sage-lens.py` remains unchanged
+- None - Enhanced version is a separate file, original `multi-model-research-agent.py` remains unchanged
 
 ### 📚 Documentation
 - Added comprehensive README for enhanced version
@@ -73,9 +73,9 @@
 To use the enhanced version:
 1. Install dependencies: `pip install -r requirements.txt`
 2. Install OpenAI Agents SDK: `pip install openai-agents` (optional but recommended)
-3. Run: `streamlit run sage_lens_enhanced.py`
+3. Run: `streamlit run research_agent_app.py`
 
-The original version (`sage-lens.py`) continues to work as before.
+The original version (`multi-model-research-agent.py`) continues to work as before.
 
 ---
 

@@ -1,13 +1,13 @@
-# Sage Lens
+# Multi-Model Research Agent
 
-Sage Lens is a Streamlit research application that turns a single topic query into a sourced research document: it gathers web results (Tavily, Serper), ranks related YouTube videos by view count, and generates the write-up with commercial LLMs (GPT-4 Turbo, Claude 3.5 Sonnet, optionally DeepSeek). It is aimed at individual researchers and analysts who want a one-screen "search, synthesize, cite" loop without assembling the pipeline themselves.
+Multi-Model Research Agent is a Streamlit research application that turns a single topic query into a sourced research document: it gathers web results (Tavily, Serper), ranks related YouTube videos by view count, and generates the write-up with commercial LLMs (GPT-4 Turbo, Claude 3.5 Sonnet, optionally DeepSeek). It is aimed at individual researchers and analysts who want a one-screen "search, synthesize, cite" loop without assembling the pipeline themselves.
 
 The repository contains two variants:
 
 | File | Role |
 |---|---|
-| `sage_lens_enhanced.py` | Primary app. Optional role-specialized generation chain (research, content, analysis), multi-provider fallback, tabbed UI with metrics. |
-| `sage-lens.py` | Baseline app. Two-provider generation (OpenAI + Anthropic), pick-longest selection, simpler two-column UI. Run by the devcontainer. |
+| `research_agent_app.py` | Primary app. Optional role-specialized generation chain (research, content, analysis), multi-provider fallback, tabbed UI with metrics. |
+| `multi-model-research-agent.py` | Baseline app. Two-provider generation (OpenAI + Anthropic), pick-longest selection, simpler two-column UI. Run by the devcontainer. |
 
 ## Architecture at a glance
 
@@ -34,8 +34,8 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full component map and 
 ## Quickstart
 
 ```bash
-git clone https://github.com/git-bonda108/sage-lens.git
-cd sage-lens
+git clone https://github.com/git-bonda108/multi-model-research-agent.git
+cd multi-model-research-agent
 pip install -r requirements.txt
 
 # create your key file
@@ -47,12 +47,12 @@ python test_setup.py
 # ending "✅ Setup complete - ready to run!" (or "will run in standard mode"
 # if the openai-agents package is absent)
 
-streamlit run sage_lens_enhanced.py
+streamlit run research_agent_app.py
 # expected: "You can now view your Streamlit app in your browser."
 # then open http://localhost:8501
 ```
 
-To run the baseline variant instead: `streamlit run sage-lens.py` (this one requires both `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`).
+To run the baseline variant instead: `streamlit run multi-model-research-agent.py` (this one requires both `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`).
 
 ## Configuration
 
@@ -78,8 +78,8 @@ Historical setup and deployment notes from earlier iterations remain in the repo
 
 ## MCP server — research capabilities for any MCP client
 
-`mcp_server/sage_lens_mcp.py` exposes the pipeline over the Model Context
-Protocol (stdio), so Claude Desktop, IDEs, or agent runtimes can use Sage Lens
+`mcp_server/research_mcp.py` exposes the pipeline over the Model Context
+Protocol (stdio), so Claude Desktop, IDEs, or agent runtimes can use Multi-Model Research Agent
 as a tool provider:
 
 | Tool | Capability | Resilience behavior |
@@ -89,12 +89,12 @@ as a tool provider:
 | `generate_report` | Research-report generation | multi-model fallback chain: gpt-4-turbo → claude-3-5-sonnet → deepseek-chat; skips unconfigured providers, degrades past failures, returns the attempt trail |
 | `provider_status` | Capability introspection | live view of configured providers and the fallback order |
 
-A `sage://capabilities` resource publishes the machine-readable manifest
+A `research://capabilities` resource publishes the machine-readable manifest
 (tools, models, failover order, degradation contract).
 
 ```bash
 pip install -r mcp_server/requirements.txt
-python mcp_server/sage_lens_mcp.py
+python mcp_server/research_mcp.py
 ```
 
 The same graceful-degradation contract governs the Streamlit app: generation

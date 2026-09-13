@@ -1,4 +1,4 @@
-"""Sage Lens MCP server.
+"""Multi-Model Research Agent MCP server.
 
 Exposes the research pipeline's capabilities over the Model Context Protocol
 (stdio transport) so any MCP client — Claude Desktop, an agent runtime, an IDE —
@@ -11,9 +11,9 @@ can call them as typed tools:
                    gracefully to whichever provider is configured and healthy
   provider_status  live capability introspection: which providers are usable now
 
-plus a `sage://capabilities` resource describing the toolset and fallback order.
+plus a `research://capabilities` resource describing the toolset and fallback order.
 
-Run:  python mcp_server/sage_lens_mcp.py
+Run:  python mcp_server/research_mcp.py
 Keys: OPENAI_API_KEY, ANTHROPIC_API_KEY, DEEPSEEK_API_KEY,
       TAVILY_API_KEY, SERPER_API_KEY  (any subset; the server adapts)
 """
@@ -27,7 +27,7 @@ from mcp.server.fastmcp import FastMCP
 
 load_dotenv(override=True)
 
-mcp = FastMCP("sage-lens")
+mcp = FastMCP("multi-model-research")
 
 LLM_FALLBACK_ORDER = ["openai", "anthropic", "deepseek"]
 
@@ -170,11 +170,11 @@ def provider_status() -> str:
     return json.dumps({"providers": _providers(), "llm_fallback_order": LLM_FALLBACK_ORDER}, indent=2)
 
 
-@mcp.resource("sage://capabilities")
+@mcp.resource("research://capabilities")
 def capabilities() -> str:
     """Machine-readable capability manifest for MCP clients."""
     return json.dumps({
-        "name": "sage-lens",
+        "name": "multi-model-research",
         "tools": ["web_search", "video_search", "generate_report", "provider_status"],
         "search_failover": ["tavily", "serper"],
         "llm_fallback_order": LLM_FALLBACK_ORDER,

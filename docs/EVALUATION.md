@@ -23,7 +23,7 @@ No performance, quality, or cost metrics exist in the code or docs to cite. The 
 
 ## Edge cases the code visibly handles
 
-Enumerated from the source (`sage_lens_enhanced.py` unless noted):
+Enumerated from the source (`research_agent_app.py` unless noted):
 
 - **Missing required keys** — validated before client construction; the app halts via `st.stop()` with step-by-step remediation for both Streamlit Cloud and local `.env` setups (both apps).
 - **Missing optional keys** — the corresponding provider/search source is set to `None` and skipped; the pipeline continues with whatever is available.

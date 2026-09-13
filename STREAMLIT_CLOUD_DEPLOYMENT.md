@@ -6,7 +6,7 @@
 - [ ] All API keys are ready
 - [ ] `requirements.txt` is up to date
 - [ ] `.streamlit/config.toml` exists
-- [ ] Main file is `sage-lens.py`
+- [ ] Main file is `multi-model-research-agent.py`
 
 ## 📋 Step-by-Step Deployment
 
@@ -14,8 +14,8 @@
 
 Ensure your repository structure looks like this:
 ```
-sage-lens/
-├── sage-lens.py
+multi-model-research-agent/
+├── multi-model-research-agent.py
 ├── requirements.txt
 ├── README.md
 ├── .streamlit/
@@ -39,9 +39,9 @@ git push origin main
 
 2. **Create New App**
    - Click "New app"
-   - Select your repository: `git-bonda108/sage-lens`
+   - Select your repository: `git-bonda108/multi-model-research-agent`
    - Branch: `main`
-   - Main file path: `sage-lens.py`
+   - Main file path: `multi-model-research-agent.py`
    - Python version: 3.9 or higher (recommended: 3.10+)
 
 3. **Configure Secrets**
