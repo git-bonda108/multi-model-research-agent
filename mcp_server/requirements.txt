@@ -1,0 +1,7 @@
+mcp>=1.0
+requests>=2.31
+python-dotenv>=1.0
+tavily-python>=0.3
+youtube-search>=2.1
+openai>=1.30
+anthropic>=0.30

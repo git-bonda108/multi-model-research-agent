@@ -75,3 +75,27 @@ With no search keys configured the app still generates content, but the Referenc
 - [docs/HARDENING.md](docs/HARDENING.md) — current security posture and a staged path to production
 
 Historical setup and deployment notes from earlier iterations remain in the repository root (`DEPLOYMENT_INSTRUCTIONS.md`, `QUICKSTART.md`, and similar); the three documents above are the maintained reference.
+
+## MCP server — research capabilities for any MCP client
+
+`mcp_server/sage_lens_mcp.py` exposes the pipeline over the Model Context
+Protocol (stdio), so Claude Desktop, IDEs, or agent runtimes can use Sage Lens
+as a tool provider:
+
+| Tool | Capability | Resilience behavior |
+|------|------------|---------------------|
+| `web_search` | Web research | Tavily primary → automatic Serper failover; errors reported, never raised |
+| `video_search` | YouTube curation | results ranked by view count |
+| `generate_report` | Research-report generation | multi-model fallback chain: gpt-4-turbo → claude-3-5-sonnet → deepseek-chat; skips unconfigured providers, degrades past failures, returns the attempt trail |
+| `provider_status` | Capability introspection | live view of configured providers and the fallback order |
+
+A `sage://capabilities` resource publishes the machine-readable manifest
+(tools, models, failover order, degradation contract).
+
+```bash
+pip install -r mcp_server/requirements.txt
+python mcp_server/sage_lens_mcp.py
+```
+
+The same graceful-degradation contract governs the Streamlit app: generation
+runs across all configured providers and continues with whichever succeed.
