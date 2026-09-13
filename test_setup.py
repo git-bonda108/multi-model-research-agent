@@ -1,5 +1,5 @@
 """
-Quick setup test script for Sage-Lens Enhanced
+Quick setup test script for Multi-Model Research Agent
 Tests if all required packages and configurations are available
 """
 
@@ -80,7 +80,7 @@ def test_env_vars():
 
 def main():
     print("=" * 60)
-    print("Sage-Lens Enhanced - Setup Test")
+    print("Multi-Model Research Agent - Setup Test")
     print("=" * 60)
     print()
     
